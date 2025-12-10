@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Bénévoles - Prétotype V11 (Design Blanc)</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+</head>
+<body>
+    <header>
+        <h1>Application de Gestion des Bénévoles</h1>
+        <nav id="nav-bar" style="display:none;"></nav>
+    </header>
+
+    <main>
+        <div id="accueil">
+            <h2>Bienvenue</h2> 
+            <p>Veuillez choisir votre rôle pour continuer.</p>
+            <div class="buttons-container">
+                <button id="btn-accueil-orga">Espace Organisation</button>
+                <button id="btn-accueil-benevole">Espace Bénévole</button>
+            </div>
+        </div>
+        
+        <div id="orga-login" style="display:none;">
+            <h2>Connexion Organisation</h2>
+            <div class="card" style="width: 300px; text-align: left;">
+                <form id="form-orga-login">
+                    <label for="orga-user">Identifiant (Simulé: 'admin') :</label>
+                    <input type="text" id="orga-user" value="admin" style="width: 100%; margin-bottom: 10px;">
+                    <label for="orga-pass">Mot de passe (Simulé: 'pass') :</label>
+                    <input type="password" id="orga-pass" value="pass" style="width: 100%; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; gap: 10px;">
+                        <button type="button" id="btn-orga-cancel" class="btn-secondary" style="flex-grow: 1;">Annuler</button>
+                        <button type="submit" class="btn-action" style="flex-grow: 1;">Se Connecter</button>
+                    </div>
+                </form>
+                <p id="message-orga-login" style="color: var(--color-danger); margin-top: 10px; display:none;">Identifiants invalides.</p>
+            </div>
+        </div>
+
+        <section id="section-orga" class="app-section" style="display:none;">
+            <h2>Tableau de Bord de l'Organisation <span id="orga-nom-dashboard"></span></h2>
+
+            <div class="card calendrier-missions">
+                <div class="calendrier-header">
+                    <button id="btn-prev-month" class="calendrier-nav">← Mois Précédent</button>
+                    <h3 id="mois-actuel">🗓️ Décembre 2025</h3>
+                    <button id="btn-next-month" class="calendrier-nav">Mois Suivant →</button>
+                </div>
+                <div id="calendrier-grille">
+                    </div>
+
+                <h4>Liste des Missions Créées</h4>
+                <ul id="liste-missions-orga" style="list-style: none; padding: 0;"></ul>
+            </div>
+            
+            <div class="card gestion-code">
+                <h3>🔑 Code d'Adhésion</h3>
+                <div class="code-display">
+                    <span id="code-actuel">ORGA-2025-ABC</span>
+                    <button id="btn-generer-code" class="btn-action">Générer un nouveau code</button>
+                </div>
+            </div>
+
+            <div class="card liste-benevoles">
+                <h3>👥 Liste des Bénévoles</h3>
+                <table id="table-benevoles">
+                    <thead>
+                        <tr><th>Nom & Prénom</th><th>Centres d'intérêt</th><th>Missions Actives</th></tr>
+                    </thead>
+                    <tbody id="corps-table-benevoles"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="section-benevole" class="app-section" style="display:none;">
+            <h2>Espace Bénévole</h2>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>👤 Mon Profil</h3>
+                    <button id="btn-modifier-profil" class="btn-action">Modifier Profil (Simulé)</button>
+                </div>
+                <div class="profil-container" id="benevole-profil">
+                    </div>
+            </div>
+
+            <div id="benevole-adhesion" class="card">
+                <h3>🚀 Rejoindre ou Accéder à une Organisation</h3>
+                
+                <div id="liste-orga-enregistrees">
+                    <h4>Organisations Enregistrées :</h4>
+                    </div>
+
+                <div id="formulaire-nouvelle-orga" style="margin-top: 20px; border-top: 1px dashed #eee; padding-top: 15px;">
+                    <h4>Rejoindre une Nouvelle Organisation :</h4>
+                    <form id="form-adhesion">
+                        <label for="input-code-adhesion">Code de l'Organisation :</label>
+                        <input type="text" id="input-code-adhesion" placeholder="Exemple : ORGA-2025-ABC" required style="margin-right: 10px;">
+                        <button type="submit" id="btn-rejoindre" class="btn-action">Rejoindre et Se Connecter</button>
+                    </form>
+                    <p id="message-adhesion" style="display:none;"></p>
+                </div>
+            </div>
+
+            <div id="benevole-dashboard" style="display:none;">
+                <h4 id="orga-connectee-info">Connecté à : [Nom Orga Simulé]</h4>
+                
+                <div class="card">
+                    <h3>🗓️ Missions Disponibles et Inscriptions</h3>
+                    <ul id="liste-missions-disponibles" style="list-style: none; padding: 0;">
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <div id="modal-mission-detail" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h4 id="modal-titre">Détails de la Mission</h4>
+
+            <div id="modal-form-orga" style="display:none;">
+                <label>Titre :</label> <input type="text" id="mission-titre-input" style="width:100%; margin-bottom:10px;">
+                <label>Lieu :</label> <input type="text" id="mission-lieu-input" style="width:100%; margin-bottom:10px;">
+                <label>Date de Début :</label> <input type="date" id="mission-date-debut-input" style="width:100%; margin-bottom:10px;">
+                <label>Date de Fin (Optionnel) :</label> <input type="date" id="mission-date-fin-input" style="width:100%; margin-bottom:10px;">
+                <label>Description :</label> <textarea id="mission-description-input" style="width:100%; margin-bottom:15px;"></textarea>
+                <div style="display: flex; justify-content: space-between;">
+                    <button id="btn-sauvegarder-mission" class="btn-action" style="flex-grow: 1; margin-right: 10px;">Sauvegarder</button>
+                    <button id="btn-supprimer-mission" class="btn-action btn-danger" style="display:none;">Supprimer</button>
+                </div>
+            </div>
+
+            <div id="modal-affichage-commun">
+                <p><strong>Lieu :</strong> <span id="mission-lieu-affichage"></span></p>
+                <p><strong>Date :</strong> <span id="mission-date-affichage"></span></p>
+                <p><strong>Description :</strong> <span id="mission-description-affichage"></span></p>
+                
+                <h5 style="color:var(--color-primary); border-top: 1px solid #eee; padding-top: 10px;">Participants (<span id="compteur-participants">0</span>)</h5>
+                <div class="participant-list" id="participants-liste">
+                    </div>
+            </div>
+            
+            <button id="btn-sinscrire-mission" class="btn-action" style="margin-top: 20px; width: 100%; display:none;">S'inscrire à cette Mission</button>
+            <button id="btn-sedesinscrire-mission" class="btn-action btn-danger" style="margin-top: 20px; width: 100%; display:none;">Se désinscrire</button>
+
+        </div>
+    </div>
+
+    <div id="modal-edit-profil" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-profil-modal">&times;</span>
+            <h4>Modification du Profil Bénévole</h4>
+
+            <form id="form-edit-profil">
+                <label>Prénom :</label> <input type="text" id="profil-prenom-input" style="width:100%; margin-bottom:10px;">
+                <label>Nom :</label> <input type="text" id="profil-nom-input" style="width:100%; margin-bottom:10px;">
+                <label>Photo (Initiale) :</label> <input type="text" id="profil-photo-input" maxlength="1" style="width:100%; margin-bottom:10px;">
+                <label>Centres d'intérêt (Séparés par des virgules) :</label> <input type="text" id="profil-interets-input" style="width:100%; margin-bottom:15px;">
+                <button type="submit" class="btn-action" style="width: 100%;">Sauvegarder le Profil</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="modal-liste-missions" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close-button" id="close-missions-benevole-modal">&times;</span>
+            <h4 id="titre-missions-benevole">Missions de Marie Dupont</h4>
+            <ul id="liste-missions-benevole-detail" style="list-style: none; padding: 0;">
+                </ul>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
