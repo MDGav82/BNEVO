@@ -1,0 +1,54 @@
+name: Deploy React App to Pages
+
+on:
+  push:
+    branches: ["main"] # Vérifie si ta branche principale s'appelle "main" ou "master"
+
+# Donne les permissions nécessaires au GITHUB_TOKEN
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Permet un seul déploiement à la fois
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: app/package-lock.json # Indique où est le lockfile
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./app # On se place dans le dossier app
+
+      - name: Build
+        run: npm run build
+        working-directory: ./app # On construit dans le dossier app
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./app/dist # Vite crée le build dans dist, à l'intérieur de app
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
